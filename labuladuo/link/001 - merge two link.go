@@ -1,24 +1,12 @@
 package main
 
-import "fmt"
-
-type linkNode struct {
-	Val  int       `json:"val"`
-	Next *linkNode `json:"next"`
-}
-
-func echoLink(link *linkNode) {
-	fmt.Println("链表的输出结果为：")
-	for link != nil {
-		fmt.Printf("%d\t", link.Val)
-		link = link.Next
-	}
-	fmt.Printf("\n")
-}
+import (
+	"basic-algorithm/labuladuo/define/link"
+)
 
 // 合并两个有序链表
-func mergeTwoSortedLink(link1, link2 *linkNode) *linkNode {
-	var head, tail *linkNode
+func mergeTwoSortedLink(link1, link2 *link.Node) *link.Node {
+	var head, tail *link.Node
 
 	if link1 == nil {
 		return link2
@@ -53,7 +41,7 @@ func mergeTwoSortedLink(link1, link2 *linkNode) *linkNode {
 }
 
 // 合并k个有序链表
-func mergeKSortedLink(links ...*linkNode) *linkNode {
+func mergeKSortedLink(links ...*link.Node) *link.Node {
 	//init
 	head := links[0]
 
@@ -66,15 +54,15 @@ func mergeKSortedLink(links ...*linkNode) *linkNode {
 
 func main() {
 	// 1. 合并两个有序链表
-	link1 := &linkNode{1, &linkNode{3, &linkNode{9, nil}}}
-	link2 := &linkNode{5, &linkNode{7, &linkNode{11, nil}}}
-	link := mergeTwoSortedLink(link1, link2)
-	echoLink(link)
+	link1 := &link.Node{Val: 1, Next: &link.Node{Val: 3, Next: &link.Node{Val: 9}}}
+	link2 := &link.Node{Val: 5, Next: &link.Node{Val: 7, Next: &link.Node{Val: 11}}}
+	sortedLink1 := mergeTwoSortedLink(link1, link2)
+	link.EchoLink(sortedLink1)
 
 	// 2. 合并k个有序队列
-	link3 := &linkNode{2, &linkNode{4, &linkNode{8, nil}}}
-	link4 := &linkNode{1, &linkNode{3, &linkNode{9, nil}}}
-	link5 := &linkNode{5, &linkNode{7, &linkNode{11, nil}}}
-	sortedLink := mergeKSortedLink(link3, link4, link5)
-	echoLink(sortedLink)
+	link3 := &link.Node{Val: 2, Next: &link.Node{Val: 4, Next: &link.Node{Val: 8}}}
+	link4 := &link.Node{Val: 1, Next: &link.Node{Val: 3, Next: &link.Node{Val: 9}}}
+	link5 := &link.Node{Val: 5, Next: &link.Node{Val: 7, Next: &link.Node{Val: 11}}}
+	sortedLink2 := mergeKSortedLink(link3, link4, link5)
+	link.EchoLink(sortedLink2)
 }

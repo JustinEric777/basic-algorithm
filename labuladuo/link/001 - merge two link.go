@@ -8,5 +8,5 @@ func mergeTwoLink() {
 }
 
 func main() {
-	fmt.Println(1111)
+	fmt.Println("test auto rsync")
 }

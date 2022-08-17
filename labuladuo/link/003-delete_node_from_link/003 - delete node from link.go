@@ -2,6 +2,7 @@ package main
 
 import (
 	"basic-algorithm/labuladuo/define/link"
+	"fmt"
 )
 
 // 1. 删除链表的倒数第k个节点
@@ -32,6 +33,7 @@ func deleteKNodeFromLinkByDesc(k int, link *link.Node) *link.Node {
 
 func main() {
 	link1 := &link.Node{Val: 1, Next: &link.Node{Val: 3, Next: &link.Node{Val: 5, Next: &link.Node{Val: 7, Next: &link.Node{Val: 9}}}}}
+	fmt.Println("1. 删除链表的倒数第k个节点：")
 	link.EchoLink(link1, "删除之前的链表结果为：")
 	newLink := deleteKNodeFromLinkByDesc(3, link1)
 	link.EchoLink(newLink, "删除之后的链表结果为：")

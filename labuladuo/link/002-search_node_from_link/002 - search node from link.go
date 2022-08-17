@@ -2,6 +2,7 @@ package main
 
 import (
 	"basic-algorithm/labuladuo/define/link"
+	line "basic-algorithm/labuladuo/define/untils"
 	"fmt"
 )
 
@@ -84,13 +85,21 @@ func searchCommonNodeFromLink(link1, link2 *link.Node) *link.Node {
 func main() {
 	// 1. 查找链表的倒数第k个节点
 	link1 := &link.Node{Val: 1, Next: &link.Node{Val: 3, Next: &link.Node{Val: 5, Next: &link.Node{Val: 7, Next: &link.Node{Val: 9}}}}}
+	fmt.Println("1. 查找链表的倒数第k个节点：")
+	link.EchoLink(link1, "原链表为：")
 	nodeFromLink := searchDescKNodeFromLink(4, link1)
-	link.EchoLink(nodeFromLink)
+	link.EchoLink(nodeFromLink, "查找的链表结果为：")
+
+	line.SplitLine()
 
 	// 2. 寻找链表的中点
 	link2 := &link.Node{Val: 1, Next: &link.Node{Val: 3, Next: &link.Node{Val: 5, Next: &link.Node{Val: 7, Next: &link.Node{Val: 9, Next: &link.Node{Val: 11}}}}}}
+	fmt.Println("2. 寻找链表的中点：")
+	link.EchoLink(link2, "原链表为：")
 	middleNodeFromLink := searchMiddleNodeFromLink(link2)
-	link.EchoLink(middleNodeFromLink)
+	link.EchoLink(middleNodeFromLink, "查找之后的链表结果为：")
+
+	line.SplitLine()
 
 	// 3. 找出单链表是否有环，并输出环起点
 	node1 := &link.Node{Val: 1}
@@ -101,8 +110,12 @@ func main() {
 	node2.Next = node3
 	node3.Next = node4
 	node4.Next = node3
+	fmt.Println("3. 找出单链表是否有环，并输出环起点：")
+	fmt.Println("原链表为： node1 -> node2 -> node3 -> <-node4")
 	circleNodeFromLink := searchCircleNodeFromLink(node1)
 	fmt.Printf("链表相遇的环起点为：\n%d\n", circleNodeFromLink.Val)
+
+	line.SplitLine()
 
 	// 4. 判断两个链表是否相交，并找出交点
 	node11 := &link.Node{Val: 1}
@@ -114,6 +127,9 @@ func main() {
 	node22.Next = node33
 	node33.Next = node44
 	node55.Next = node33
+	fmt.Println("4. 判断两个链表是否相交，并找出交点：")
+	fmt.Println("原链表1为：node11 -> node22 -> node33")
+	fmt.Println("原链表2为：node55 -> node33")
 	commonNodeFromLink := searchCommonNodeFromLink(node11, node55)
-	link.EchoLink(commonNodeFromLink)
+	link.EchoLink(commonNodeFromLink, "两链表的交点为：")
 }

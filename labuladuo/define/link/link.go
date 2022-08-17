@@ -7,12 +7,12 @@ type Node struct {
 	Next *Node `json:"next"`
 }
 
-func EchoLink(link *Node, desc ...string) {
-	if desc[0] != "" {
-		fmt.Println(desc[0])
-	} else {
-		fmt.Println("链表的输出结果为：")
+func EchoLink(link *Node, desc string) {
+	if desc == "" {
+		desc = "链表的输出结果为："
 	}
+
+	fmt.Println(desc)
 	if link == nil {
 		fmt.Printf("链表内容为空")
 	}

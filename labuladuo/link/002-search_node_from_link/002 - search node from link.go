@@ -1,6 +1,9 @@
 package main
 
-import "basic-algorithm/labuladuo/define/link"
+import (
+	"basic-algorithm/labuladuo/define/link"
+	"fmt"
+)
 
 // 1. 寻找单链表的倒数第k个节点
 func searchDescKNodeFromLink(k int, link *link.Node) *link.Node {
@@ -31,7 +34,7 @@ func searchMiddleNodeFromLink(link *link.Node) *link.Node {
 	return slow
 }
 
-// 3. 判断单链表是否有环并找出环起点
+// 3. 判断单链表是否有环并找出环起点 - 从相遇点在走k-m下一个相遇点就是环起点
 func searchCircleNodeFromLink(link *link.Node) *link.Node {
 	fast, slow := link, link
 
@@ -40,9 +43,10 @@ func searchCircleNodeFromLink(link *link.Node) *link.Node {
 		fast = fast.Next.Next
 		if fast == slow {
 			break
-		} else {
-			return nil
 		}
+	}
+	if fast == nil || fast.Next == nil {
+		return nil
 	}
 
 	slow = link
@@ -98,7 +102,7 @@ func main() {
 	node3.Next = node4
 	node4.Next = node3
 	circleNodeFromLink := searchCircleNodeFromLink(node1)
-	link.EchoLink(circleNodeFromLink)
+	fmt.Printf("链表相遇的环起点为：\n%d\n", circleNodeFromLink.Val)
 
 	// 4. 判断两个链表是否相交，并找出交点
 	node11 := &link.Node{Val: 1}

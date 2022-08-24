@@ -239,14 +239,87 @@ func findRepeatSubSequence1(s string) []string {
 	return result
 }
 
-// 6. Rabin-Karp 算法
-func rabinKarpStr() {
+// 6. Rabin-Karp 算法 - 在文本串 txt 中搜索模式串 pat 的起始索引
+func rabinKarpStr(txt, pat string) int {
+	L, R := len(pat), 256
+	// 存储 R^(L - 1) 的结果
+	RL := int(math.Pow(float64(R), float64(L-1)))
+	// pat 转换为数组
+	nums := make([]int32, len(pat))
+	for key, val := range pat {
+		nums[key] = val
+	}
+	patHash := 0
+	for i := 0; i < len(pat); i++ {
+		patHash = R*patHash + int(pat[i])
+	}
 
+	// windowHash 可能会整型溢出
+	var windowHash int
+	left, right := 0, 0
+	for right < len(txt) {
+		// 窗口右移
+		windowHash = windowHash*R + int(txt[right])
+		right++
+
+		// 收缩窗口
+		for right-left == L {
+			if patHash == windowHash {
+				return left
+			}
+
+			windowHash = windowHash - int(txt[left])*RL
+			left++
+		}
+	}
+
+	return -1
 }
 
-// 7. kmp算法, 字符串匹配
-func kmpStr() {
+// 处理 windowHash 作为整型溢出的可能性 - 采用不断取模规避溢出
+func rabinKarpStr1(txt, pat string) int {
+	L, R := len(pat), 256
 
+	// 取一个最大素数取模用
+	Q := 1658598167
+	RL := 1
+	for i := 1; i <= L-1; i++ {
+		RL = (RL * R) % Q
+	}
+
+	// 计算 pat 的 hash 值
+	patHash := 0
+	for i := 0; i < len(pat); i++ {
+		patHash = (R*patHash + int(pat[i])) % Q
+	}
+
+	windowHash := 0
+	left, right := 0, 0
+	for right < len(txt) {
+		windowHash = ((R*windowHash)%Q + int(txt[right])) % Q
+		right++
+
+		for right-left == L {
+			if windowHash == patHash {
+				if pat == txt[left:right] {
+					return left
+				}
+			}
+
+			// 规避负数
+			// X % Q == (X + Q) % Q 是一个模运算法则
+			windowHash = ((windowHash-(int(txt[left])*RL))%Q + Q) % Q
+			left++
+		}
+	}
+
+	return -1
+}
+
+// 7. kmp算法, 字符串匹配 - Knuth-Morris-Pratt算法
+func kmpStr(txt, pat string) int {
+
+	return -1
 }
 
 func main() {
@@ -299,4 +372,16 @@ func main() {
 	fmt.Println("查找的结果为：", repeatSubSequence1)
 
 	line.SplitLine()
+
+	fmt.Println("6. Rabin Karp 字符串匹配算法：（可能会产生整型溢出）")
+	txt, pat := "efgabch", "abc"
+	fmt.Println("原字符串和需要匹配的字符串分别为：", txt, ",", pat)
+	karpStrPos := rabinKarpStr(txt, pat)
+	fmt.Println("查找的结果为：", karpStrPos)
+
+	fmt.Println("6. Rabin Karp 字符串匹配算法：（取模处理会产生整型溢出）")
+	txt1, pat1 := "efgabch", "abc"
+	fmt.Println("原字符串和需要匹配的字符串分别为：", txt1, ",", pat1)
+	karpStrPos1 := rabinKarpStr1(txt1, pat1)
+	fmt.Println("查找的结果为：", karpStrPos1)
 }

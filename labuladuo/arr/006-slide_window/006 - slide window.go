@@ -4,6 +4,7 @@ import (
 	line "basic-algorithm/labuladuo/define/untils"
 	"fmt"
 	"math"
+	"strings"
 )
 
 // 1. 最小覆盖子串 - 返回字符串 s 中 涵盖t所有子符的最小子串
@@ -318,8 +319,41 @@ func rabinKarpStr1(txt, pat string) int {
 
 // 7. kmp算法, 字符串匹配 - Knuth-Morris-Pratt算法
 func kmpStr(txt, pat string) int {
+	i, j := 0, 0
+	next := getNext(pat)
+	for i < len(txt) && j < len(pat) {
+		if j == -1 || string(txt[i]) == string(pat[j]) {
+			i++
+			j++
+		} else {
+			j = next[j]
+		}
+	}
+
+	if j == len(pat) {
+		return i - j
+	}
 
 	return -1
+}
+
+func getNext(ps string) []int {
+	pArr := strings.Split(ps, "")
+	next := make([]int, len(pArr))
+	next[0] = -1
+	j, k := 0, -1
+
+	for j < len(ps)-1 {
+		if k == -1 || pArr[j] == pArr[k] {
+			j++
+			k++
+			next[j] = k
+		} else {
+			k = next[k]
+		}
+	}
+
+	return next
 }
 
 func main() {
@@ -384,4 +418,12 @@ func main() {
 	fmt.Println("原字符串和需要匹配的字符串分别为：", txt1, ",", pat1)
 	karpStrPos1 := rabinKarpStr1(txt1, pat1)
 	fmt.Println("查找的结果为：", karpStrPos1)
+
+	line.SplitLine()
+
+	fmt.Println("7. KMP 字符串匹配算法：")
+	txt2, pat2 := "efgabch", "abc"
+	fmt.Println("原字符串和需要匹配的字符串分别为：", txt2, ",", pat2)
+	karpStrPos2 := kmpStr(txt2, pat2)
+	fmt.Println("查找的结果为：", karpStrPos2)
 }

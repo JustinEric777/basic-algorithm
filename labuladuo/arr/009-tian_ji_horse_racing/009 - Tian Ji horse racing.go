@@ -6,7 +6,7 @@ import "fmt"
 // 输入两个长度相等的数组 nums1 和 nums2, 重新组织 nums1, 使 nums1 的优势最大化
 // 尽可能多的使 nums1[i] > nums2[i]
 func advantageCount(nums1, nums2 []int) []int {
-	// nums2 降序排序 - 优先级队列降序
+	//TODO:: nums2 降序排序 - 优先级队列降序
 
 	// nums1 升序排序
 

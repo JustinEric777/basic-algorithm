@@ -1,5 +1,0 @@
-package mymod
-
-func Add() {
-
-}

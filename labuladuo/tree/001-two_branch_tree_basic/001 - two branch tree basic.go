@@ -48,7 +48,7 @@ func maxDepth1(root *tree.Node) int {
 	return depth + 1
 }
 
-// 二叉树的前序遍历
+// 二叉树的前序遍历 - DFS
 var resArr []int
 
 func prevSort(root *tree.Node) []int {
@@ -88,15 +88,27 @@ func maxDepth2(root *tree.Node) int {
 }
 
 // 二叉树中的最大路径和
+var (
+	routeSum int
+	resSum   int
+)
+
 func maxRouteSum(root *tree.Node) int {
+	traverseRouteSum(root)
+
+	return resSum
+}
+
+func traverseRouteSum(root *tree.Node) int {
 	if root == nil {
 		return 0
 	}
 
-	leftMaxRouteSum := maxRouteSum(root.Left)
-	rightMaxRouteSum := maxRouteSum(root.Right)
-	fmt.Println(leftMaxRouteSum)
-	fmt.Println(rightMaxRouteSum)
+	leftRouteSum := traverseRouteSum(root.Left)
+	rightRouteSum := traverseRouteSum(root.Right)
+	// 情况1
+	resSum = int(math.Max(float64(leftRouteSum+rightRouteSum+root.Val), float64(resSum)))
+	// 情况2
 
 	return 0
 }
@@ -126,7 +138,7 @@ func main() {
 
 	line.SplitLine()
 
-	fmt.Println("2. 二叉树的前序遍历：")
+	fmt.Println("2. 二叉树的前序遍历：(DFS)")
 	fmt.Println("二叉树为：", root)
 	preSortedTree := prevSort(root)
 	fmt.Println("前序遍历的结果为：", preSortedTree)
@@ -138,4 +150,18 @@ func main() {
 	fmt.Println("二叉树为：", root1)
 	width := maxWidth(root)
 	fmt.Println("二叉树的最大直径为：", width)
+
+	line.SplitLine()
+
+	fmt.Println("4. 二叉树的层次遍历：（BFS）")
+	fmt.Println("二叉树为：", root)
+	levelTraverse(root)
+
+	line.SplitLine()
+
+	fmt.Println("5. 二叉树的最大路径和：")
+	root2 := &tree.Node{Left: &tree.Node{Left: nil, Val: 6, Right: nil}, Val: 9, Right: &tree.Node{Left: &tree.Node{Left: nil, Val: -6, Right: nil}, Val: -3, Right: &tree.Node{Left: &tree.Node{Left: nil, Val: 2, Right: nil}, Val: 2, Right: nil}}}
+	fmt.Println("二叉树为：", root2)
+	maxRouteSumVal := maxRouteSum(root2)
+	fmt.Println("二叉树的最大路径和为：", maxRouteSumVal)
 }

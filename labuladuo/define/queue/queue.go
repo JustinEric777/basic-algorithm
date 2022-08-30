@@ -12,6 +12,7 @@ type (
 	node struct {
 		value interface{}
 		prev  *node
+		next  *node
 	}
 )
 
@@ -23,8 +24,15 @@ func (this *Queue) Push(value interface{}) {
 	this.lock.Lock()
 	defer this.lock.Unlock()
 
-	node := &node{value, this.tail.prev}
-	this.tail = node
+	node := &node{value, this.top, nil}
+	if this.top == nil {
+		this.top = node
+		this.tail = this.top
+	} else {
+		node.prev = this.tail
+		this.tail.next = node
+		this.tail = node
+	}
 	this.length++
 }
 
@@ -35,11 +43,18 @@ func (this *Queue) Pop() interface{} {
 	if this.length == 0 {
 		return nil
 	}
-	value := this.top.value
-	this.top = this.top.prev
+	curNode := this.top
+	if this.top.next == nil {
+		this.top = nil
+	} else {
+		this.top = this.top.next
+		this.top.prev.next = nil
+		this.top.prev = nil
+	}
+
 	this.length--
 
-	return value
+	return curNode.value
 }
 
 func (this *Queue) Len() int {

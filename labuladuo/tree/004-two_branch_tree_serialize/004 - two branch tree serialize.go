@@ -55,7 +55,7 @@ func (treeSerialization *TreeSerialization) Deserialize() *tree.Node {
 var nums []string
 
 func (treeSerialization *TreeSerialization) Deserialize2(str string) *tree.Node {
-	if len(treeSerialization.StrTree) == 0 {
+	if len(str) == 0 {
 		return nil
 	}
 

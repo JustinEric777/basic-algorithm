@@ -83,6 +83,44 @@ func traverse() *tree.Node {
 	return node
 }
 
+// 寻找重复的子树
+// dfs过程中实现序列化,转存hash map计数
+var hashMap map[string]int
+
+func findRepeatSubTree(root *tree.Node) [][]string {
+	if root == nil {
+		return [][]string{}
+	}
+
+	hashMap = make(map[string]int)
+	traverseSubTree(root)
+
+	var res [][]string
+	// 整理hashMap
+	for key, val := range hashMap {
+		if val > 1 {
+			subtree := strings.Replace(key, "*", "", -1)
+			res = append(res, strings.Split(subtree, ""))
+		}
+	}
+
+	return res
+}
+
+func traverseSubTree(root *tree.Node) {
+	if root == nil {
+		return
+	}
+
+	// 序列化树
+	serialization := &TreeSerialization{}
+	serialize := serialization.Serialize(root)
+	hashMap[serialize]++
+
+	traverseSubTree(root.Left)
+	traverseSubTree(root.Right)
+}
+
 func main() {
 	fmt.Println("1. 二叉树的序列化和序列化：")
 	node7 := &tree.Node{Left: nil, Right: nil, Val: 1}
@@ -107,4 +145,18 @@ func main() {
 	deserialize2 := t.Deserialize2(serialize)
 	tree.EchoTwoBranchTree(deserialize2)
 
+	line.SplitLine()
+
+	node77 := &tree.Node{Left: nil, Right: nil, Val: 4}
+	node66 := &tree.Node{Left: nil, Right: nil, Val: 4}
+	node55 := &tree.Node{Left: nil, Right: nil, Val: 4}
+	node44 := &tree.Node{Left: node77, Right: nil, Val: 2}
+	node33 := &tree.Node{Left: node66, Right: nil, Val: 2}
+	node22 := &tree.Node{Left: node33, Right: node55, Val: 3}
+	node11 := &tree.Node{Left: node44, Right: node22, Val: 1}
+	fmt.Println("2. 寻找重复的子树：")
+	fmt.Println("原二叉树为：")
+	tree.EchoTwoBranchTree(node11)
+	subTree := findRepeatSubTree(node11)
+	fmt.Println("寻找的重复子树为：", subTree)
 }

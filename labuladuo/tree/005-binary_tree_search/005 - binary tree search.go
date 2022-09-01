@@ -63,60 +63,116 @@ func deleteNodeFromBST(root *tree.Node, target int) *tree.Node {
 		return nil
 	}
 
+	if root.Val == target {
+		// 删除操作
+		// 仅一个孩子节点
+		if root.Left == nil {
+			return root.Right
+		}
+		if root.Right == nil {
+			return root.Left
+		}
+		//两个孩子节点，获取右子树最小的节点
+		minNode := getMin(root.Right)
+		root.Val = minNode.Val
+		root.Right = deleteNodeFromBST(root.Right, minNode.Val)
+
+		minNode.Left = root.Left
+		minNode.Right = root.Right
+		root = minNode
+	}
+	if root.Val > target {
+		root.Left = deleteNodeFromBST(root.Left, target)
+	}
+	if root.Val < target {
+		root.Right = deleteNodeFromBST(root.Right, target)
+	}
+
 	return nil
 }
 
-// 二叉搜索树中的搜索
-var result bool
-
-func searchInBST(root *tree.Node, target int) bool {
-	if root == nil {
-		return false
+func getMin(root *tree.Node) *tree.Node {
+	for root.Left != nil {
+		root = root.Left
 	}
 
-	// search
-	traverseSearch(root, target)
-
-	return result
+	return root
 }
 
-func traverseSearch(root *tree.Node, target int) {
+// 二叉搜索树中的搜索
+func searchInBST(root *tree.Node, target int) *tree.Node {
 	if root == nil {
-		return
+		return nil
 	}
 
-	if root.Val == target {
-		result = true
-	} else if root.Val < target {
-		traverseSearch(root.Right, target)
-	} else if root.Val > target {
-		traverseSearch(root.Left, target)
+	if root.Val < target {
+		return searchInBST(root.Right, target)
 	}
+	if root.Val > target {
+		return searchInBST(root.Left, target)
+	}
+
+	return root
 }
 
 // 二叉搜索树中的插入操作
 func insertToBST(root *tree.Node, target int) *tree.Node {
+	newNode := &tree.Node{Left: nil, Right: nil, Val: target}
+	// 未找到对应的位置
+	if root == nil {
+		root = newNode
+	}
+	// 找到相应的位置
+	if root.Val > target {
+		if root.Left == nil {
+			root.Left = newNode
+		} else {
+			insertToBST(root.Right, newNode.Val)
+		}
+	} else if root.Val < target {
+		if root.Right == nil {
+			root.Right = newNode
+		} else {
+			insertToBST(root.Left, newNode.Val)
+		}
+	}
 
-	return nil
+	return root
+}
+
+func getMax(root *tree.Node) *tree.Node {
+	for root.Right != nil {
+		root = root.Right
+	}
+
+	return root
+}
+
+func isValidBST(root *tree.Node) bool {
+	return checkValidBST(root, nil, nil)
 }
 
 // 验证二叉搜索树
-func checkValidBST(root *tree.Node) bool {
+func checkValidBST(root *tree.Node, min, max *tree.Node) bool {
 	if root == nil {
 		return true
 	}
 
-	if root.Left != nil && root.Left.Val > root.Val {
+	if min != nil && root.Val <= min.Val {
 		return false
 	}
-	if root.Right != nil && root.Right.Val <= root.Val {
+	if max != nil && root.Val >= max.Val {
 		return false
 	}
 
-	return checkValidBST(root.Left) && checkValidBST(root.Right)
+	return checkValidBST(root.Left, min, root) && checkValidBST(root.Right, root, max)
 }
 
 // 不同的二叉搜索树
+// 给一个正整数n, 有多少二叉搜索树的可能性- 闭区间 【0， n】
+func numsOfBST(n int) {
+
+}
 
 func main() {
 	fmt.Println("1. 二叉搜索树转化为累加树：")
@@ -156,7 +212,9 @@ func main() {
 	tree.EchoTwoBranchTree(node1)
 	delTarget := 6
 	fmt.Println("需要删除的节点为：", delTarget)
-	fmt.Println("删除改节点之后的二叉搜索树为：")
+	deleteNodeFromBST(node1, delTarget)
+	fmt.Println("删除节点之后的二叉搜索树为：")
+	tree.EchoTwoBranchTree(node1)
 
 	line.SplitLine()
 
@@ -175,14 +233,16 @@ func main() {
 	tree.EchoTwoBranchTree(node1)
 	inTarget := 8
 	fmt.Println("二叉搜索树需要插入的节点为：", inTarget)
+	inBST := insertToBST(node1, inTarget)
 	fmt.Println("插入节点之后的二叉搜索树为：")
+	tree.EchoTwoBranchTree(inBST)
 
 	line.SplitLine()
 
 	fmt.Println("6. 验证二叉搜索树的合法性：")
 	fmt.Println("原二叉树为：")
 	tree.EchoTwoBranchTree(node1)
-	validBST := checkValidBST(node1)
+	validBST := isValidBST(node1)
 	fmt.Println("二叉搜索树的合法性判责结果为：", validBST)
 
 	line.SplitLine()

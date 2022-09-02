@@ -140,14 +140,6 @@ func insertToBST(root *tree.Node, target int) *tree.Node {
 	return root
 }
 
-func getMax(root *tree.Node) *tree.Node {
-	for root.Right != nil {
-		root = root.Right
-	}
-
-	return root
-}
-
 func isValidBST(root *tree.Node) bool {
 	return checkValidBST(root, nil, nil)
 }
@@ -170,8 +162,27 @@ func checkValidBST(root *tree.Node, min, max *tree.Node) bool {
 
 // 不同的二叉搜索树
 // 给一个正整数n, 有多少二叉搜索树的可能性- 闭区间 【0， n】
-func numsOfBST(n int) {
+func numsOfBST(n int) int {
+	if n <= 1 {
+		return n
+	}
 
+	// 区间为左闭右开
+	numBST := traverseBST(n)
+	return numBST
+}
+
+func traverseBST(n int) int {
+	if n <= 1 {
+		return 1
+	}
+
+	numBST := 0
+	for i := 1; i < n+1; i++ {
+		numBST += traverseBST(i-1) * traverseBST(n-i)
+	}
+
+	return numBST
 }
 
 func main() {
@@ -247,6 +258,9 @@ func main() {
 
 	line.SplitLine()
 
-	fmt.Println("7. 不同的二叉搜索树：")
-
+	fmt.Println("7. 根据区间生成不同的二叉搜索树（数量）：")
+	n := 3
+	fmt.Println("给定的区间为：", n)
+	bstNum := numsOfBST(n)
+	fmt.Println("生成的二叉搜索树数量为：", bstNum)
 }

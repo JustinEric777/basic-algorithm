@@ -377,11 +377,44 @@ func longestPalindromeSubStr1(str string) (int, string) {
 // 给你一个二维整数数组 envelopes ，其中 envelopes[i] = [wi, hi] ，表示第 i 个信封的宽度和高度
 // 当另一个信封的宽度和高度都比这个信封大的时候，这个信封就可以放进另一个信封里，如同俄罗斯套娃一样
 // 请计算 最多能有多少个 信封能组成一组“俄罗斯套娃”信封（即可以把一个信封放到另一个信封里面）
+// sort - 先对宽度 w 进行升序排序，如果遇到 w 相同的情况，则按照高度 h 降序排序；之后把所有的 h 作为一个数组，在这个数组上计算 LIS 的长度就是答案
 func maxEnvelopes(nums [][]int) int {
-	dp := make(map[string]int)
-	fmt.Println(dp)
+	dp := make(map[string][][]int)
 
-	return 0
+	// init
+	for _, v := range nums {
+		key := fmt.Sprintf("%d%s%d", v[0], "_", v[1])
+		dp[key] = [][]int{{v[0], v[1]}}
+	}
+
+	for i := 0; i < len(nums); i++ {
+		// get max pos
+		var positions [][]int
+		preMax := 0
+		for j := 0; j < i; j++ {
+			preKey := fmt.Sprintf("%d%s%d", nums[j][0], "_", nums[j][1])
+			if preMax < len(dp[preKey]) {
+				positions = dp[preKey]
+			}
+		}
+
+		key := fmt.Sprintf("%d%s%d", nums[i][0], "_", nums[i][1])
+		for position, _ := range positions {
+			dp[key] = positions
+			// judge max and min 当前元素为最大或者最小
+			if (nums[i][0] > nums[position][0] && nums[i][1] > nums[position][1]) ||
+				(nums[i][0] < nums[position][0] && nums[i][1] < nums[position][1]) {
+				dp[key] = append(dp[key], nums[i])
+			}
+		}
+	}
+
+	res := 0
+	for _, v := range dp {
+		res = int(math.Max(float64(res), float64(len(v))))
+	}
+
+	return res
 }
 
 // 下降路径最小和
@@ -389,6 +422,48 @@ func maxEnvelopes(nums [][]int) int {
 // 下降路径 可以从第一行中的任何元素开始，并从每一行中选择一个元素
 // 在下一行选择的元素和当前行所选元素最多相隔一列（即位于正下方或者沿对角线向左或者向右的第一个元素）
 // 具体来说，位置 (row, col) 的下一个元素应当是 (row + 1, col - 1)、(row + 1, col) 或者 (row + 1, col + 1)
+func minFallingPathSum(nums [][]int) int {
+	dp := make(map[string]int)
+
+	// init last row
+	for k := 0; k < len(nums); k++ {
+		key := fmt.Sprintf("%d%s%d", len(nums)-1, "_", k)
+		dp[key] = nums[len(nums)-1][k]
+	}
+
+	for i := len(nums) - 1; i >= 0; i-- {
+		for j := 0; j < len(nums); j++ {
+			// get min value
+			minVal := int(^uint(0) >> 1)
+			if j > 0 {
+				nextKey1 := fmt.Sprintf("%d%s%d", i+1, "_", j-1)
+				minVal = int(math.Min(float64(minVal), float64(dp[nextKey1])))
+
+			}
+			nextKey2 := fmt.Sprintf("%d%s%d", i+1, "_", j)
+			minVal = int(math.Min(float64(minVal), float64(dp[nextKey2])))
+			if j < len(nums)-1 {
+				nextKey3 := fmt.Sprintf("%d%s%d", i+1, "_", j+1)
+				minVal = int(math.Min(float64(minVal), float64(dp[nextKey3])))
+			}
+
+			// set current val
+			key := fmt.Sprintf("%d%s%d", i, "_", j)
+			dp[key] = nums[i][j] + minVal
+		}
+	}
+
+	// get min val
+	res := int(^uint(0) >> 1)
+	for i := 0; i < len(nums); i++ {
+		key := fmt.Sprintf("%d%s%d", 0, "_", i)
+		if dp[key] < res {
+			res = dp[key]
+		}
+	}
+
+	return res
+}
 
 func main() {
 	fmt.Println("1. 斐波那契数列：")
@@ -473,4 +548,16 @@ func main() {
 	line.SplitLine()
 
 	fmt.Println("6. 俄罗斯套娃：")
+	envelopes := [][]int{{5, 4}, {6, 4}, {6, 7}, {2, 3}}
+	fmt.Println("原信封为：", envelopes)
+	maxEv := maxEnvelopes(envelopes)
+	fmt.Println("最大的套娃信封个数为：", maxEv)
+
+	line.SplitLine()
+
+	fmt.Println("7. 下降路径最小和：")
+	matrix := [][]int{{2, 1, 3}, {6, 5, 4}, {7, 8, 9}}
+	fmt.Println("原数组为：", matrix)
+	fallingPathSum := minFallingPathSum(matrix)
+	fmt.Println("下降路径的最小和为：", fallingPathSum)
 }
